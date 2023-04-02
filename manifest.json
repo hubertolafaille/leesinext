@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Lee Sin Extension",
+  "description": "Spoiler warning extension",
+  "version": "1.0",
+  "action": {
+    "default_popup": "hello.html",
+    "default_icon": "hello_extensions.png"
+  }
+}

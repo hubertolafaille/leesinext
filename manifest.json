@@ -10,5 +10,13 @@
   "permissions": [
     "storage",
     "tabs"
+  ],
+  "content_scripts": [
+    {
+      "js": ["scripts/content.js"],
+      "matches": [
+        "https://www.youtube.com/*"
+      ]
+    }
   ]
 }

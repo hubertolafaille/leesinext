@@ -11,6 +11,7 @@ function loadKeywords() {
         if (data.keywords) {
             keywords = data.keywords;
         }
+        updateKeywordsDisplay();
     });
     console.log(chrome.storage.sync.get('keywords'));
 }
@@ -45,6 +46,43 @@ function addKeyword(keyword) {
     chrome.storage.sync.set({ keywords: keywords }, function () {
         console.log('Keyword added to the list.');
     });
+    updateKeywordsDisplay();
     console.log(chrome.storage.sync.get('keywords'));
 }
+
+function updateKeywordsDisplay() {
+    const container = document.getElementById('keywords-container');
+    container.innerHTML = '';
+
+    keywords.forEach(keyword => {
+        const keywordDiv = document.createElement('div');
+        keywordDiv.classList.add('keyword');
+
+        const button = document.createElement('button');
+        button.textContent = keyword;
+        button.classList.add('keyword-button');
+        keywordDiv.appendChild(button);
+
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'X';
+        deleteButton.classList.add('keyword-delete-button');
+        deleteButton.addEventListener('click', function () {
+            removeKeyword(keyword);
+        });
+        keywordDiv.appendChild(deleteButton);
+
+        container.appendChild(keywordDiv);
+    });
+}
+
+function removeKeyword(keywordToRemove) {
+    keywords = keywords.filter(keyword => keyword !== keywordToRemove);
+
+    chrome.storage.sync.set({ keywords: keywords }, function () {
+        console.log('Keyword removed from the list.');
+    });
+
+    updateKeywordsDisplay();
+}
+
 

@@ -51,6 +51,17 @@ input[type="text"]:focus {
     padding-block: 8px;
 }
 
+.main-content-keyword-list {
+    padding-inline: 16px;
+    padding-block: 8px;
+}
+
+.main-content-keyword-list-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
 button {
     padding: 8px 16px;
     background-color: #616E7C;
@@ -67,6 +78,22 @@ button:hover {
 button:active {
     background-color: #FFE380;
     color: #121212;
+}
+
+.main-content-keyword-list-title {
+    margin-bottom: 8px;
+}
+
+.keyword-button {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    padding-right: 8px;
+}
+
+.keyword-delete-button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding-inline: 8px;
 }
 
 .main-content-add-keyword-form-button-reset:active {

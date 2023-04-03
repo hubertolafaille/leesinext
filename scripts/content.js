@@ -1,21 +1,27 @@
-const uniqueVideoTitles = new Set();
+const uniqueVideoIds = new Set();
 
 function changeVideoTitles() {
     const titleElements = document.querySelectorAll('#video-title');
     titleElements.forEach((titleElement) => {
-        let title = titleElement.textContent.trim();
-        if (title.toLowerCase().includes('reaction')) {
-            titleElement.textContent = displayedSpoilWarningTitle('reaction');
+        const parentElement = titleElement.closest('ytd-rich-item-renderer');
+        if (!parentElement) {
+            console.warn("No parent element found");
+            return;
         }
-        if (!uniqueVideoTitles.has(title)) {
-            uniqueVideoTitles.add(title);
-            console.log(title);
+
+        const thumbnailAnchor = parentElement.querySelector('a#thumbnail');
+        if (!thumbnailAnchor) {
+            console.warn("No thumbnail anchor element found");
+            return;
+        }
+
+        const videoId = thumbnailAnchor.getAttribute('href').split('watch?v=')[1];
+
+        if (!uniqueVideoIds.has(videoId)) {
+            uniqueVideoIds.add(videoId);
+            console.log(`ID: ${videoId}`);
         }
     });
-}
-
-function displayedSpoilWarningTitle(keyword){
-    return 'Attention spoil potentiel pour : '+ keyword;
 }
 
 function observeDOM() {
@@ -37,9 +43,3 @@ function observeDOM() {
 }
 
 observeDOM();
-
-
-
-
-
-

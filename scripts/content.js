@@ -4,6 +4,19 @@ const PARENT_SELECTOR = 'ytd-rich-item-renderer';
 const THUMBNAIL_ANCHOR_SELECTOR = 'a#thumbnail';
 const DEBOUNCE_TIME = 500;
 
+function injectStyles(css) {
+    const style = document.createElement('style');
+    style.textContent = css;
+    document.head.appendChild(style);
+}
+
+injectStyles(`
+  .blurred {
+    filter: blur(30px);
+    transition: filter 0.3s ease-in-out;
+  }
+`);
+
 function collectVideoIds() {
     const titleElements = document.querySelectorAll(TITLE_SELECTOR);
     titleElements.forEach((titleElement) => {
@@ -12,6 +25,9 @@ function collectVideoIds() {
             console.warn("No parent element found");
             return;
         }
+
+        // Ajouter la classe 'blurred' aux éléments ytd-rich-item-renderer
+        parentElement.classList.add('blurred');
 
         const thumbnailAnchor = parentElement.querySelector(THUMBNAIL_ANCHOR_SELECTOR);
         if (!thumbnailAnchor) {

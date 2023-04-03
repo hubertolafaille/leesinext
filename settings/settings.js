@@ -1,14 +1,9 @@
 let keywords = [];
 
 document.addEventListener('DOMContentLoaded', function () {
-    // clearKeywords();
     loadKeywords();
     focusInputForm();
     initAddKeywordForm();
-});
-
-document.getElementById('navigateToParamButton').addEventListener('click', function() {
-    openSettingsPage();
 });
 
 function loadKeywords() {
@@ -51,16 +46,5 @@ function addKeyword(keyword) {
         console.log('Keyword added to the list.');
     });
     console.log(chrome.storage.sync.get('keywords'));
-}
-
-function openSettingsPage() {
-    chrome.tabs.create({ url: 'settings/settings.html' });
-}
-
-function clearKeywords() {
-    keywords = [];
-    chrome.storage.sync.set({ keywords: keywords }, function () {
-        console.log('Keywords list cleared.');
-    });
 }
 

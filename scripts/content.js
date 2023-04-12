@@ -21,32 +21,47 @@ injectStyles(`
   }
 `);
 
-function checkTitle(title) {
-    if (title.includes('z')){
-        console.log(title);
-        return true;
+function checkTitle(title, keywords) {
+    for (const keyword of keywords) {
+        if (title.toLowerCase().includes(keyword)) {
+            return true;
+        }
     }
     return false;
 }
 
-function checkDescription(description) {
+function checkDescription(description, keywords) {
+    for (const keyword of keywords) {
+        if (description.toLowerCase().includes(keyword)) {
+            return true;
+        }
+    }
     return false;
 }
 
-function checkTags(tags) {
+function checkTags(tags, keywords) {
+    if (!tags) {
+        return false;
+    }
+
+    for (const keyword of keywords) {
+        if (tags.some(tag => tag.toLowerCase().includes(keyword))) {
+            return true;
+        }
+    }
     return false;
 }
 
-function isKeywordFounded(title, description, tags){
-    if (checkTitle(title)) {
+function isKeywordFounded(title, description, tags, keywords){
+    if (checkTitle(title, keywords)) {
         return true;
     }
 
-    if (checkDescription(description)) {
+    if (checkDescription(description, keywords)) {
         return true;
     }
 
-    if (checkTags(tags)) {
+    if (checkTags(tags, keywords)) {
         return true;
     }
 
@@ -66,9 +81,14 @@ function fetchVideoDetails(videoId) {
         .then((data) => {
             if (data.items.length > 0) {
                 const snippet = data.items[0].snippet;
-                // console.log(snippet);
-                // Vérifiez les détails de la vidéo et déterminez si vous souhaitez supprimer la classe 'blurred'
-                return snippet;
+                return new Promise((resolve) => {
+                    chrome.storage.sync.get("keywords", (items) => {
+                        const keywords = items.keywords || [];
+                        console.log(keywords);
+                        const shouldBlur = isKeywordFounded(snippet.title, snippet.description, snippet.tags, keywords);
+                        resolve({snippet, shouldBlur});
+                    });
+                });
             } else {
                 console.warn('No video details found for videoId:', videoId);
             }
@@ -102,19 +122,33 @@ function collectVideoIds() {
             uniqueVideoIds.add(videoId);
             console.log(`ID: ${videoId}`);
 
-            // Requête API
-            fetchVideoDetails(videoId).then(value => {
-                // console.log(value.title);
-                // console.log(value);
-                // Vérifiez les conditions pour supprimer la classe 'blurred'
-                if (isKeywordFounded(value.title, value.description, value.tags)){
-                    parentElement.classList.add("checked");
-                    return;
+            fetchVideoDetails(videoId).then(({snippet, shouldBlur}) => {
+                if (!shouldBlur) {
+                    parentElement.classList.remove("blurred");
+                } else {
+                    console.log(snippet.title);
+                    console.log(snippet.description);
+                    console.log(snippet.tag);
                 }
-                // Si les conditions sont remplies, supprimez la classe 'blurred' pour le parentElement
-                parentElement.classList.remove('blurred');
                 parentElement.classList.add("checked");
             });
+
+            // Requête API
+            // fetchVideoDetails(videoId).then(value => {
+            //     const keywords = chrome.storage.sync.get('keywords');
+            //     console.log(keywords);
+            //     // console.log(value.title);
+            //     // console.log(value);
+            //     // Vérifiez les conditions pour supprimer la classe 'blurred'
+            //     if (isKeywordFounded(value.title, value.description, value.tags, keywords)){
+            //         parentElement.classList.add('blurred');
+            //         parentElement.classList.add("checked");
+            //         return;
+            //     }
+            //     // Si les conditions sont remplies, supprimez la classe 'blurred' pour le parentElement
+            //     // parentElement.classList.remove('blurred');
+            //     parentElement.classList.add("checked");
+            // });
         }
     });
 }
